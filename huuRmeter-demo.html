@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HuurMeter — Controleer jouw huurprijs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0f1f3d;
+    --navy-mid: #1a3260;
+    --blue: #1e4db7;
+    --blue-light: #3a6fd8;
+    --cream: #f7f4ee;
+    --cream-dark: #ede9e0;
+    --amber: #d4821a;
+    --amber-light: #f5a623;
+    --red: #c0392b;
+    --green: #1a7a4a;
+    --text: #1c1c1e;
+    --text-muted: #5a5a6e;
+    --border: rgba(15,31,61,0.12);
+    --radius: 14px;
+    --shadow: 0 2px 12px rgba(15,31,61,0.10);
+    --shadow-lg: 0 8px 32px rgba(15,31,61,0.14);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--navy);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 3px solid var(--amber);
+  }
+
+  .logo {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: -0.5px;
+  }
+
+  .logo span {
+    color: var(--amber-light);
+  }
+
+  .header-badge {
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.75);
+    font-size: 12px;
+    font-weight: 400;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  /* ── Hero ── */
+  .hero {
+    background: var(--navy);
+    padding: 64px 32px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(30,77,183,0.25) 0%, transparent 70%);
+    top: -200px; left: 50%; transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    display: inline-block;
+    color: var(--amber-light);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 700;
+    color: white;
+    line-height: 1.15;
+    max-width: 680px;
+    margin: 0 auto 20px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--amber-light);
+  }
+
+  .hero p {
+    color: rgba(255,255,255,0.65);
+    font-size: 17px;
+    max-width: 520px;
+    margin: 0 auto 36px;
+    font-weight: 300;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .hero-stat {
+    text-align: center;
+  }
+
+  .hero-stat strong {
+    display: block;
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    color: white;
+    font-weight: 600;
+  }
+
+  .hero-stat span {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* ── Main layout ── */
+  .main-container {
+    max-width: 900px;
+    margin: -36px auto 0;
+    padding: 0 20px 80px;
+    position: relative;
+    z-index: 10;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .card-header {
+    background: var(--navy);
+    color: white;
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 2px solid var(--amber);
+  }
+
+  .card-header-icon {
+    width: 36px; height: 36px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .card-header-icon svg { width: 18px; height: 18px; stroke: white; fill: none; }
+
+  .card-header h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+
+  .card-header p {
+    font-size: 13px;
+    opacity: 0.6;
+    font-weight: 300;
+  }
+
+  .card-body { padding: 28px; }
+
+  /* ── Form ── */
+  .form-section {
+    margin-bottom: 28px;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  .form-grid.full { grid-template-columns: 1fr; }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .field label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .field label .req { color: var(--amber); }
+
+  .field input, .field select {
+    height: 46px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--cream);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235a5a6e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+
+  .field input:focus, .field select:focus {
+    outline: none;
+    border-color: var(--blue-light);
+    box-shadow: 0 0 0 3px rgba(30,77,183,0.10);
+    background: white;
+  }
+
+  .field input.invalid { border-color: var(--red); }
+
+  .field-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* ── Toggle group (ja/nee pills) ── */
+  .toggle-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .toggle-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .toggle-btn:hover { border-color: var(--blue-light); color: var(--blue); }
+
+  .toggle-btn.active {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: white;
+  }
+
+  /* ── Submit btn ── */
+  .submit-btn {
+    width: 100%;
+    height: 56px;
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    position: relative;
+    overflow: hidden;
+    margin-top: 8px;
+    letter-spacing: -0.2px;
+  }
+
+  .submit-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s;
+  }
+
+  .submit-btn:hover { background: var(--blue); }
+  .submit-btn:hover::after { transform: translateX(100%); }
+  .submit-btn:active { transform: scale(0.99); }
+
+  .submit-btn.loading { pointer-events: none; opacity: 0.75; }
+
+  /* ── Result panel ── */
+  #result-panel {
+    display: none;
+    margin-top: 24px;
+    animation: fadeUp 0.4s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Verdict banner ── */
+  .verdict {
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    border: 1.5px solid;
+  }
+
+  .verdict.green  { background: #f0faf4; border-color: #a8dfc0; }
+  .verdict.orange { background: #fff8f0; border-color: #f5c87a; }
+  .verdict.red    { background: #fff3f2; border-color: #f5aba5; }
+
+  .verdict-icon {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 24px;
+  }
+
+  .verdict.green  .verdict-icon { background: #d0f0e0; }
+  .verdict.orange .verdict-icon { background: #fde8c0; }
+  .verdict.red    .verdict-icon { background: #fdd8d6; }
+
+  .verdict-text h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .verdict.green  .verdict-text h3 { color: var(--green); }
+  .verdict.orange .verdict-text h3 { color: #a05c00; }
+  .verdict.red    .verdict-text h3 { color: var(--red); }
+
+  .verdict-text p { font-size: 15px; color: var(--text-muted); }
+
+  /* ── Result grid ── */
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .result-box {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+  }
+
+  .result-box-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .result-box-value {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .result-box-sub { font-size: 13px; color: var(--text-muted); }
+
+  /* ── Punten bar ── */
+  .punten-section {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+
+  .punten-title {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 16px;
+  }
+
+  .punten-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .punten-row-label { font-size: 13px; color: var(--text); flex: 1; min-width: 140px; }
+  .punten-row-bar { flex: 2; height: 8px; background: var(--cream-dark); border-radius: 4px; overflow: hidden; }
+  .punten-row-fill { height: 100%; background: var(--navy); border-radius: 4px; transition: width 0.7s ease; }
+  .punten-row-pts { font-size: 13px; font-weight: 500; color: var(--navy); min-width: 45px; text-align: right; }
+
+  .punten-total {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .punten-total span { font-size: 14px; font-weight: 500; }
+  .punten-total strong { font-family: 'Fraunces', serif; font-size: 22px; color: var(--navy); }
+
+  /* ── Advies ── */
+  .advies-section {
+    background: var(--navy);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 20px;
+    color: white;
+  }
+
+  .advies-title {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .advies-steps { list-style: none; }
+
+  .advies-steps li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.82);
+  }
+
+  .advies-steps li .step-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--amber);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── Upsell ── */
+  .upsell-card {
+    background: linear-gradient(135deg, #fffbf0 0%, #fff8e6 100%);
+    border: 2px solid var(--amber-light);
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .upsell-icon {
+    width: 48px; height: 48px;
+    background: var(--amber-light);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 22px;
+  }
+
+  .upsell-text h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+
+  .upsell-text p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  .upsell-list {
+    list-style: none;
+    margin-bottom: 16px;
+  }
+
+  .upsell-list li {
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 5px;
+    display: flex; gap: 7px; align-items: flex-start;
+  }
+
+  .upsell-list li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+  .upsell-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--navy);
+    color: white;
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-decoration: none;
+  }
+
+  .upsell-btn:hover { background: var(--blue); }
+
+  .upsell-price {
+    display: inline-block;
+    background: var(--amber-light);
+    color: var(--navy);
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 13px;
+    margin-left: 4px;
+  }
+
+  /* ── Disclaimer ── */
+  .disclaimer {
+    margin-top: 24px;
+    padding: 16px 20px;
+    background: var(--cream-dark);
+    border-radius: 10px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-left: 3px solid var(--border);
+    line-height: 1.6;
+  }
+
+  .disclaimer strong { color: var(--text); }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    padding: 32px 20px;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  footer a { color: var(--blue); text-decoration: none; }
+
+  /* ── Mobile ── */
+  @media (max-width: 600px) {
+    header { padding: 14px 20px; }
+    .hero { padding: 40px 20px 60px; }
+    .card-body { padding: 20px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-grid.three { grid-template-columns: 1fr 1fr; }
+    .result-grid { grid-template-columns: 1fr; }
+    .upsell-card { flex-direction: column; }
+    .punten-row-label { min-width: 100px; }
+    .verdict { flex-direction: column; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Huur<span>Meter</span></div>
+  <span class="header-badge">Gebaseerd op het huidig puntenstelsel (WWS)</span>
+</header>
+
+<div class="hero">
+  <span class="hero-eyebrow">Huurprijscheck</span>
+  <h1>Betaal jij <em>te veel</em> huur?</h1>
+  <p>Vul je woninggegevens in en HuurMeter berekent direct of jouw huurprijs klopt — op basis van het huidig Woningwaarderingsstelsel.</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <strong>WWS</strong>
+      <span>Huidig puntenstelsel</span>
+    </div>
+    <div class="hero-stat">
+      <strong>WOZ</strong>
+      <span>WOZ-waarde meegewogen</span>
+    </div>
+    <div class="hero-stat">
+      <strong>€ 4,99</strong>
+      <span>Volledig rapport</span>
+    </div>
+  </div>
+</div>
+
+<div class="main-container">
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">
+        <svg viewBox="0 0 24 24" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <div>
+        <h2>Jouw woninggegevens</h2>
+        <p>Hoe meer je invult, hoe nauwkeuriger de berekening</p>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <div class="form-section">
+        <div class="section-label">Woning & huur</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Postcode <span class="req">*</span></label>
+            <input type="text" id="postcode" placeholder="1234 AB" maxlength="7">
+          </div>
+          <div class="field">
+            <label>Maandelijkse huurprijs <span class="req">*</span></label>
+            <input type="number" id="huurprijs" placeholder="€ 950" min="0" max="9999">
+          </div>
+          <div class="field">
+            <label>Woningtype <span class="req">*</span></label>
+            <select id="woningtype">
+              <option value="">Kies type...</option>
+              <option value="appartement">Appartement</option>
+              <option value="eengezinswoning">Eengezinswoning</option>
+              <option value="studio">Studio / Kamer</option>
+              <option value="maisonette">Maisonette</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Aantal kamers <span class="req">*</span></label>
+            <select id="kamers">
+              <option value="">Selecteer...</option>
+              <option value="1">1 kamer</option>
+              <option value="2">2 kamers</option>
+              <option value="3">3 kamers</option>
+              <option value="4">4 kamers</option>
+              <option value="5">5 kamers</option>
+              <option value="6">6+ kamers</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-label">Afmetingen</div>
+        <div class="form-grid three">
+          <div class="field">
+            <label>Woonoppervlak (m²) <span class="req">*</span></label>
+            <input type="number" id="oppervlak" placeholder="65" min="5" max="500">
+          </div>
+          <div class="field">
+            <label>Bouwjaar</label>
+            <input type="number" id="bouwjaar" placeholder="1980" min="1850" max="2025">
+          </div>
+          <div class="field">
+            <label>Verdieping</label>
+            <select id="verdieping">
+              <option value="">Onbekend</option>
+              <option value="0">Begane grond</option>
+              <option value="1">1e verdieping</option>
+              <option value="2">2e verdieping</option>
+              <option value="3">3e verdieping of hoger</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-label">Kwaliteit & duurzaamheid</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Energielabel</label>
+            <select id="energielabel">
+              <option value="">Onbekend</option>
+              <option value="A4">A++++ / A+++</option>
+              <option value="A3">A++</option>
+              <option value="A2">A+</option>
+              <option value="A1">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+              <option value="E">E</option>
+              <option value="F">F</option>
+              <option value="G">G</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>WOZ-waarde (geschat)</label>
+            <select id="woz">
+              <option value="">Onbekend / liever niet zeggen</option>
+              <option value="50000">Minder dan €100.000</option>
+              <option value="125000">€100.000 – €150.000</option>
+              <option value="175000">€150.000 – €200.000</option>
+              <option value="250000">€200.000 – €300.000</option>
+              <option value="375000">€300.000 – €450.000</option>
+              <option value="525000">€450.000 – €600.000</option>
+              <option value="700000">Meer dan €600.000</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-label">Voorzieningen</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Keuken</label>
+            <select id="keuken">
+              <option value="basis">Standaard</option>
+              <option value="normaal">Normaal (≥ 4 aanrechtblad m)</option>
+              <option value="luxe">Luxe (inbouwapparatuur)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Badkamer</label>
+            <select id="badkamer">
+              <option value="douche">Douche</option>
+              <option value="bad_douche">Bad én douche</option>
+              <option value="luxe">Luxe / dubbel wastafel</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top: 14px;">
+          <label style="font-size:13px; font-weight:500; display:block; margin-bottom:10px;">Extra aanwezig in de woning</label>
+          <div class="toggle-group">
+            <button class="toggle-btn" data-key="lift" onclick="toggleFeature(this)">Lift aanwezig</button>
+            <button class="toggle-btn" data-key="balkon" onclick="toggleFeature(this)">Balkon / dakterras</button>
+            <button class="toggle-btn" data-key="tuin" onclick="toggleFeature(this)">Privé tuin</button>
+            <button class="toggle-btn" data-key="garage" onclick="toggleFeature(this)">Garage / carport</button>
+            <button class="toggle-btn" data-key="cv" onclick="toggleFeature(this)">Centrale verwarming</button>
+            <button class="toggle-btn" data-key="dubbel_glas" onclick="toggleFeature(this)">Dubbel glas (volledig)</button>
+            <button class="toggle-btn" data-key="zonnepanelen" onclick="toggleFeature(this)">Zonnepanelen</button>
+            <button class="toggle-btn" data-key="parkeren" onclick="toggleFeature(this)">Parkeerplaats</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="submit-btn" id="submit-btn" onclick="berekenHuur()">
+        Bereken mijn huurprijs →
+      </button>
+    </div>
+  </div>
+
+  <!-- Result panel -->
+  <div id="result-panel">
+
+    <!-- GRATIS: oordeel + bedragen -->
+    <div id="verdict-banner" class="verdict"></div>
+
+    <div class="result-grid">
+      <div class="result-box">
+        <div class="result-box-label">Jouw huurprijs</div>
+        <div class="result-box-value" id="res-huur"></div>
+        <div class="result-box-sub">per maand</div>
+      </div>
+      <div class="result-box">
+        <div class="result-box-label">Max. redelijke huur (WWS)</div>
+        <div class="result-box-value" id="res-max"></div>
+        <div class="result-box-sub" id="res-max-sub"></div>
+      </div>
+    </div>
+
+    <!-- TEASER: vergrendelde puntentelling -->
+    <div class="punten-section" style="position:relative; overflow:hidden;">
+      <div class="punten-title">📊 Volledige puntentelling per categorie</div>
+      <div id="punten-rows-blur" style="filter:blur(4px); pointer-events:none; user-select:none; opacity:0.6;">
+        <div class="punten-row"><span class="punten-row-label">Woonoppervlak</span><div class="punten-row-bar"><div class="punten-row-fill" style="width:70%"></div></div><span class="punten-row-pts">— pt</span></div>
+        <div class="punten-row"><span class="punten-row-label">Energielabel</span><div class="punten-row-bar"><div class="punten-row-fill" style="width:50%"></div></div><span class="punten-row-pts">— pt</span></div>
+        <div class="punten-row"><span class="punten-row-label">WOZ-waarde</span><div class="punten-row-bar"><div class="punten-row-fill" style="width:40%"></div></div><span class="punten-row-pts">— pt</span></div>
+        <div class="punten-row"><span class="punten-row-label">Keuken & sanitair</span><div class="punten-row-bar"><div class="punten-row-fill" style="width:30%"></div></div><span class="punten-row-pts">— pt</span></div>
+        <div class="punten-row"><span class="punten-row-label">Voorzieningen</span><div class="punten-row-bar"><div class="punten-row-fill" style="width:25%"></div></div><span class="punten-row-pts">— pt</span></div>
+      </div>
+      <!-- Lock overlay -->
+      <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; background:rgba(247,244,238,0.7); backdrop-filter:blur(2px); border-radius:var(--radius);">
+        <div style="font-size:28px; margin-bottom:8px;">🔒</div>
+        <div style="font-family:'Fraunces',serif; font-size:16px; font-weight:600; color:var(--navy); margin-bottom:4px;">Puntentelling per categorie</div>
+        <div style="font-size:13px; color:var(--text-muted); text-align:center; max-width:260px;">Zie precies waar jouw woning op scoort — onderdeel van het volledige rapport</div>
+      </div>
+    </div>
+
+    <!-- TEASER: vergrendeld advies -->
+    <div style="position:relative; background:var(--navy); border-radius:var(--radius); padding:22px 24px; margin-bottom:20px; overflow:hidden;">
+      <div style="filter:blur(5px); pointer-events:none; user-select:none; opacity:0.4; color:white;">
+        <div style="font-family:'Fraunces',serif; font-size:16px; margin-bottom:12px;">💡 Wat kun je doen?</div>
+        <div style="font-size:14px; line-height:1.8; color:rgba(255,255,255,0.8);">Stap 1: ████████████████████████████<br>Stap 2: ████████████████████<br>Stap 3: ██████████████████████████████</div>
+      </div>
+      <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <div style="font-size:28px; margin-bottom:8px;">🔒</div>
+        <div style="font-family:'Fraunces',serif; font-size:16px; font-weight:600; color:white; margin-bottom:4px;">Persoonlijk stappenplan</div>
+        <div style="font-size:13px; color:rgba(255,255,255,0.65); text-align:center; max-width:260px;">Wat je nu concreet kunt doen — inclusief bezwaarbrief en juristadvies</div>
+      </div>
+    </div>
+
+    <!-- UPSELL -->
+    <div class="upsell-card">
+      <div class="upsell-icon">📄</div>
+      <div class="upsell-text">
+        <h4>Ontgrendel het volledige rapport <span class="upsell-price">€ 4,99</span></h4>
+        <p>Je hebt gezien of je te veel betaalt. Nu is de vraag: <strong>wat doe je eraan?</strong> Het rapport geeft je alles wat je nodig hebt.</p>
+        <ul class="upsell-list">
+          <li>Volledige puntentelling per categorie met uitleg</li>
+          <li>Persoonlijk stappenplan op basis van jouw situatie</li>
+          <li>Kant-en-klare bezwaarbrief voor de Huurcommissie</li>
+          <li>Juridisch advies: dit zijn jouw rechten als huurder</li>
+          <li>Overzicht van huurrechtjuristen in jouw regio</li>
+        </ul>
+        <button class="upsell-btn" onclick="alert('Betaalsysteem volgt in volgende versie!')">
+          Rapport ontgrendelen voor € 4,99
+        </button>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> HuurMeter geeft een indicatieve berekening op basis van het huidig Woningwaarderingsstelsel (WWS). De uitkomst is geen juridisch advies en er kunnen geen rechten aan worden ontleend. WOZ-waarden en puntenaantallen kunnen afwijken van de officiële vaststelling door de Huurcommissie. Raadpleeg bij twijfel een huurrechtjurist of dien een verzoek in bij de <a href="https://www.huurcommissie.nl" target="_blank">Huurcommissie</a>.
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  © 2024 HuurMeter — <a href="#">Privacy</a> · <a href="#">Contact</a> · Niet gelieerd aan de Nederlandse overheid
+</footer>
+
+<script>
+  const features = {};
+
+  function toggleFeature(btn) {
+    const key = btn.dataset.key;
+    features[key] = !features[key];
+    btn.classList.toggle('active', features[key]);
+  }
+
+  // WWS puntentabel energielabel (huidig stelsel — E/F/G hebben aftrekpunten)
+  const energiePunten = {
+    'A4': 52, 'A3': 44, 'A2': 36, 'A1': 28,
+    'B': 22, 'C': 15, 'D': 8, 'E': -2, 'F': -5, 'G': -10, '': 10
+  };
+
+  // WWS maximale huur per puntenaantal (2024, afgerond)
+  function maxHuurVanPunten(punten) {
+    if (punten <= 0)   return 0;
+    if (punten <= 40)  return punten * 5.43;
+    if (punten <= 60)  return 217 + (punten - 40) * 6.12;
+    if (punten <= 80)  return 340 + (punten - 60) * 7.25;
+    if (punten <= 100) return 485 + (punten - 80) * 8.10;
+    if (punten <= 120) return 647 + (punten - 100) * 8.80;
+    if (punten <= 145) return 823 + (punten - 120) * 9.20;
+    return 1053 + (punten - 145) * 9.80;
+  }
+
+  function berekenHuur() {
+    const postcode  = document.getElementById('postcode').value.trim();
+    const huurprijs = parseFloat(document.getElementById('huurprijs').value) || 0;
+    const type      = document.getElementById('woningtype').value;
+    const kamers    = parseInt(document.getElementById('kamers').value) || 0;
+    const oppervlak = parseFloat(document.getElementById('oppervlak').value) || 0;
+    const bouwjaar  = parseInt(document.getElementById('bouwjaar').value) || 0;
+    const elabel    = document.getElementById('energielabel').value;
+    const wozVal    = parseInt(document.getElementById('woz').value) || 0;
+    const keuken    = document.getElementById('keuken').value;
+    const badkamer  = document.getElementById('badkamer').value;
+
+    // Validatie
+    let ok = true;
+    ['postcode','huurprijs','woningtype','kamers','oppervlak'].forEach(id => {
+      const el = document.getElementById(id);
+      const v = el.value.trim();
+      if (!v || v === '') {
+        el.classList.add('invalid');
+        ok = false;
+      } else {
+        el.classList.remove('invalid');
+      }
+    });
+    if (!ok) {
+      alert('Vul alle verplichte velden (*) in voor een berekening.');
+      return;
+    }
+
+    // ── WWS Puntentelling ──
+
+    const puntenRows = [];
+    let totaal = 0;
+
+    // 1. Oppervlak woonruimte (1 punt per m²)
+    const oppPunten = Math.round(oppervlak);
+    puntenRows.push({ label: 'Woonoppervlak', punten: oppPunten, max: 120, toelichting: `${oppervlak} m²` });
+    totaal += oppPunten;
+
+    // 2. Energielabel
+    const ePunten = energiePunten[elabel] ?? 10;
+    puntenRows.push({ label: 'Energielabel', punten: ePunten, max: 52, toelichting: elabel || 'onbekend (schatting)' });
+    totaal += ePunten;
+
+    // 3. Keuken
+    const keukenPunten = keuken === 'luxe' ? 7 : keuken === 'normaal' ? 4 : 2;
+    puntenRows.push({ label: 'Keuken', punten: keukenPunten, max: 7, toelichting: keuken });
+    totaal += keukenPunten;
+
+    // 4. Sanitair
+    const sanPunten = badkamer === 'luxe' ? 8 : badkamer === 'bad_douche' ? 6 : 4;
+    puntenRows.push({ label: 'Sanitair', punten: sanPunten, max: 8 });
+    totaal += sanPunten;
+
+    // 5. WOZ (max 50 punten, circa 1pt per €8.000 WOZ, afgerond)
+    let wozPunten = 0;
+    if (wozVal > 0) {
+      wozPunten = Math.min(50, Math.round(wozVal / 10000));
+    }
+    puntenRows.push({ label: 'WOZ-waarde', punten: wozPunten, max: 50, toelichting: wozVal > 0 ? `ca. €${wozVal.toLocaleString('nl-NL')}` : 'niet opgegeven' });
+    totaal += wozPunten;
+
+    // 6. Extra voorzieningen
+    let extraPunten = 0;
+    if (features['balkon'])       extraPunten += 5;
+    if (features['tuin'])         extraPunten += 7;
+    if (features['garage'])       extraPunten += 7;
+    if (features['lift'])         extraPunten += 3;
+    if (features['cv'])           extraPunten += 2;
+    if (features['dubbel_glas'])  extraPunten += 3;
+    if (features['zonnepanelen']) extraPunten += 4;
+    if (features['parkeren'])     extraPunten += 5;
+    if (extraPunten > 0) {
+      puntenRows.push({ label: 'Extra voorzieningen', punten: extraPunten, max: 36 });
+      totaal += extraPunten;
+    }
+
+    // 7. Bouwjaar correctie (voor/na 1965)
+    let bouwCorrectie = 0;
+    if (bouwjaar > 0) {
+      if (bouwjaar >= 2000)      bouwCorrectie = 5;
+      else if (bouwjaar >= 1990) bouwCorrectie = 2;
+      else if (bouwjaar <= 1945) bouwCorrectie = -5;
+      if (bouwCorrectie !== 0) {
+        puntenRows.push({ label: 'Bouwjaar', punten: bouwCorrectie, max: 5, toelichting: bouwjaar });
+        totaal += bouwCorrectie;
+      }
+    }
+
+    totaal = Math.max(0, totaal);
+
+    // Max huurprijs berekenen
+    const maxHuur = maxHuurVanPunten(totaal);
+    const verschil = huurprijs - maxHuur;
+    const isSociaal = maxHuur <= 900.07; // sociale huurgrens huidig stelsel
+
+    // ── Resultaten renderen ──
+
+    document.getElementById('res-huur').textContent = `€ ${huurprijs.toLocaleString('nl-NL', {minimumFractionDigits: 0})}`;
+    document.getElementById('res-max').textContent  = `€ ${Math.round(maxHuur).toLocaleString('nl-NL')}`;
+    document.getElementById('res-max-sub').textContent = `${totaal} punten — ${isSociaal ? 'sociale huur' : verschil > 0 && maxHuur > 1184 ? 'vrije sector' : 'middenhuur'}`;
+
+    // Verdict
+    const verdictEl = document.getElementById('verdict-banner');
+    let verdictClass, verdictIcon, verdictTitel, verdictTekst;
+
+    if (verschil > 50) {
+      verdictClass = 'red';
+      verdictIcon = '⚠️';
+      verdictTitel = `Je betaalt waarschijnlijk te veel!`;
+      verdictTekst = `Op basis van het huidig puntenstelsel is de maximale redelijke huur voor jouw woning ca. €${Math.round(maxHuur).toLocaleString('nl-NL')}. Jij betaalt €${Math.round(verschil)} meer per maand — dat is €${Math.round(verschil * 12).toLocaleString('nl-NL')} per jaar. Ontgrendel het rapport om te zien wat je kunt doen.`;
+    } else if (verschil > -30) {
+      verdictClass = 'orange';
+      verdictIcon = '🔍';
+      verdictTitel = 'Huurprijs zit in de grenszone';
+      verdictTekst = `Jouw huurprijs ligt dicht bij de berekende grens. Een nauwkeurigere analyse via het volledige rapport geeft meer duidelijkheid over jouw exacte positie.`;
+    } else {
+      verdictClass = 'green';
+      verdictIcon = '✓';
+      verdictTitel = 'Huurprijs lijkt redelijk';
+      verdictTekst = `Op basis van de ingevoerde gegevens lijkt jouw huurprijs binnen de verwachte bandbreedte te vallen. Het volledige rapport geeft je de exacte onderbouwing voor je eigen administratie.`;
+    }
+
+    verdictEl.className = `verdict ${verdictClass}`;
+    verdictEl.innerHTML = `
+      <div class="verdict-icon">${verdictIcon}</div>
+      <div class="verdict-text">
+        <h3>${verdictTitel}</h3>
+        <p>${verdictTekst}</p>
+      </div>`;
+
+    // Scroll & toon
+    document.getElementById('result-panel').style.display = 'block';
+    document.getElementById('result-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+</script>
+</body>
+</html>
